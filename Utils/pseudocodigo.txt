@@ -1,0 +1,25 @@
+#define ZERO_TIME 10
+
+while(1){
+	
+	if(pagina nao esta presnte){
+		
+		if(tem paginas livres){
+			
+			adiciona a pagina na ram
+		}else{
+			
+			chama o algoritmo
+		}
+	}
+	mem_v[page].ultimo_acesso = tempo;
+	mem_v[page].controle |= REFERENCIADO
+	if(rw == w){
+		
+		mem_v[page].controle |= ALTERADO
+		n_writes++;
+	}else{
+	
+		n_reads++;
+	}
+}

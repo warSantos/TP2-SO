@@ -1,0 +1,36 @@
+
+uint decide(uint entra){
+	/*
+	 * Faz a decisão de quem vai sair...
+	 */
+
+	
+	//Atualiza o endereço da página que vai entrar.
+	//TALVEZ POSSA FICAR FORA DA FUNÇÃO.
+	memV[entra].endereco = memV[sai].endereco;
+
+
+	/*
+	 * Insere o cara que entrou na fila/heap...
+	 */
+
+
+	/*
+	 * No caso do LRU, precisa reconstruir a heap aqui...
+	 */
+
+	return sai;
+}
+
+void smain(uint entra){
+	uint sai = decide();
+
+	//Checando se a página está suja.
+	if((memV[sai].controle & ALTERADO) != 0){
+		n_dirty_pages++;
+	}
+
+	//Zera os bits da página que saiu.
+	memV[sai].controle = 0;
+
+}

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./main.out random teste/arq.txt 524288 2097152

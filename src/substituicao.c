@@ -4,11 +4,10 @@
 uint fifo_indice = 0;
 
 uint sub_fifo(uint page){
-	fifo_indice++;
 	if(fifo_indice == size_mem_fisica){
 		fifo_indice = 0;
 	}
-	return fifo_indice;
+	return fifo_indice++;
 }
 
 
@@ -29,6 +28,8 @@ uint sub_random(uint page){
 
 void substituicao(uint page){
 	uint sai = politica(page);
+	
+	printf("Quem sai: %d\n", sai);
 	
 	//Atualiza o endereço da página que vai entrar.
 	mem_virtual[page].endereco = mem_virtual[sai].endereco;

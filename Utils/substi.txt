@@ -4,11 +4,6 @@ uint decide(uint entra){
 	 * Faz a decisão de quem vai sair...
 	 */
 
-	
-	//Atualiza o endereço da página que vai entrar.
-	//TALVEZ POSSA FICAR FORA DA FUNÇÃO.
-	memV[entra].endereco = memV[sai].endereco;
-
 
 	/*
 	 * Insere o cara que entrou na fila/heap...

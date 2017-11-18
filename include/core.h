@@ -24,10 +24,10 @@ typedef struct Moldura {
 }Moldura;
 
 ///Quantidade de páginas da memória virtual.
-uint size_mem;
+uint size_mem_virtual;
 
 ///Quantidade de páginas da memória física.
-uint size_page;
+uint size_mem_fisica;
 
 ///Memória virtual.
 Moldura *mem_virtual;
@@ -47,8 +47,6 @@ uint n_dirty_pages; ///Quantidade de páginas sujas.
 
 ///Tempo de relógio.
 uint tempo;
-
-//uint *lista;
 
 ///String para fazer o cache do arquivo.
 char *acessos;

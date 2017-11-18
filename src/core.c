@@ -26,7 +26,7 @@ uint leArquivo(char *arquivo){
 void zera_bit(void){
 
 	uint i;
-	for(i = 0; i < size_mem; ++i){
+	for(i = 0; i < size_mem_virtual; ++i){
 
 		mem_virtual[i].controle &= ~REFERENCIADO;
 	}

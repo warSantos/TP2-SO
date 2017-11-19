@@ -59,6 +59,7 @@ int main(int argc, char **argv){
 		printf("size_ram: %d size_vi: %d\n", size_mem_fisica, size_mem_virtual);
 	}
 	do{
+		break;
 		// referenciando a referencia i.
 		temp_linha = acessos + (LEN * tempo);
 		sscanf(temp_linha, "%x %c\n", &addr, &rw);
@@ -78,8 +79,7 @@ int main(int argc, char **argv){
 			if(posicao_livre < size_mem_fisica){
 
 				mem_virtual[page].endereco = posicao_livre;
-				posicao_livre++;
-				
+				posicao_livre++;				
 			}else{
 				
 				if(flag_debug == 'd'){

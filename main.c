@@ -88,6 +88,19 @@ int main(int argc, char **argv){
 				substituicao(page);
 			}
 			page_faults++;
+		}else{
+			//O lru precisa refazer a heap das páginas que foram acessadas.
+			if(posicao_livre >= size_mem_fisica && algoritmo[0] == 'l'){
+				mem_virtual[page].ultimo_acesso = tempo;
+				extern construi_heap;
+				if(!construi_heap){
+					construi_heap = 1;
+					heap_constroi();
+					heap_refaz(0);
+				}else{
+					heap_refaz(mem_fisica[mem_virtual[page].endereco]);
+				}
+			}
 		}
 		if(!(tempo % ZERO_TIME)){
 			// verifica se é hora de zerar os bits de referência.
@@ -105,7 +118,9 @@ int main(int argc, char **argv){
 		}
 		
 		//Armazena na memória física o índice da memória virtual.
-		mem_fisica[mem_virtual[page].endereco] = page;
+		if(posicao_livre < size_mem_fisica && algoritmo[0] == 'l'){
+			mem_fisica[mem_virtual[page].endereco] = page;
+		}
 		
 		if(flag_debug == 'd'){
 

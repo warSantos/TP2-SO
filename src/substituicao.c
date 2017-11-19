@@ -20,26 +20,29 @@ void heap_refaz(int inicio){
 
 	uint troca = heap[i];
 	while(j < size_mem_fisica){
-		printf("Pai[%d]: %d # E[%d](%d)", i, mem_virtual[troca].ultimo_acesso, j, mem_virtual[heap[j]].ultimo_acesso);
+		//printf("Pai[%d]: %d # E[%d](%d)", i, mem_virtual[troca].ultimo_acesso, j, mem_virtual[heap[j]].ultimo_acesso);
 		if((j + 1 < size_mem_fisica) && (mem_virtual[heap[j]].ultimo_acesso > mem_virtual[heap[j + 1]].ultimo_acesso)){
 			j++;
-			printf(" D[%d](%d)", j, mem_virtual[heap[j]].ultimo_acesso);
+			//printf(" D[%d](%d)", j, mem_virtual[heap[j]].ultimo_acesso);
 		}
-		printf("\n");
+		//printf("\n");
 
 		if(mem_virtual[heap[j]].ultimo_acesso < mem_virtual[troca].ultimo_acesso){
 			heap[i] = heap[j];
+			mem_fisica[j] = i;
+			
 			i = j;
 			j = 2 * i + 1;
 
-			printf("Trocado");
-			getchar();
+			//printf("Trocado");getchar();
 		}else{
-			getchar();
+			//getchar();
 			break;
 		}
 	}
 	heap[i] = troca;
+	mem_fisica[inicio] = i;
+	
 }
 
 void heap_constroi(){
@@ -47,7 +50,17 @@ void heap_constroi(){
 
 	heap = malloc(size_mem_fisica * sizeof(uint));
 
-	memcpy(heap, mem_fisica, size_mem_fisica * sizeof(uint));
+	//memcpy(heap, mem_fisica, size_mem_fisica * sizeof(uint));
+	for(i=0; i<size_mem_fisica; i++){
+		heap[i] = mem_fisica[i];
+		mem_fisica[i] = i;
+	}
+	
+	/*printf("constroi\n");
+	for(i = 0; i < size_mem_fisica; i++){
+		printf("%2d: %d, %d\n", i, heap[i], mem_virtual[heap[i]].ultimo_acesso);
+	}
+	getchar();*/
 
 	for(i = (size_mem_fisica - 1) / 2; i > 0; i--){
 		heap_refaz(i);
@@ -63,12 +76,12 @@ uint sub_lru(uint page){
 
 	heap_refaz(0);
 
-	printf("lru:\n");
+	/*printf("lru:\n");
 	uint i;
 	for(i = 0; i < size_mem_fisica; i++){
 		printf("%2d: %d, %d\n", i, heap[i], mem_virtual[heap[i]].ultimo_acesso);
 	}
-	getchar();
+	getchar();*/
 
 	uint sai = heap[0];
 

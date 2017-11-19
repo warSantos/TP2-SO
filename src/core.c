@@ -28,6 +28,7 @@ void zera_bit(void){
 	uint i;
 	for(i = 0; i < size_mem_virtual; ++i){
 
+		//mem_virtual[i].controle &= ~REFERENCIADO;
 		mem_virtual[i].controle &= ~REFERENCIADO;
 	}
 }
@@ -51,13 +52,13 @@ void print_memoria_virtual(){
 
 char detecta_teste(char *arquivo){
 
-	if(!strcmp(arquivo, "compilador.log")){
+	if(!strcmp(arquivo, "teste/compilador.log")){
 		return 'c';
-	}else if(!strcmp(arquivo, "compressor.log")){
+	}else if(!strcmp(arquivo, "teste/compressor.log")){
 		return 'p';
-	}else if(!strcmp(arquivo, "matriz.log")){
+	}else if(!strcmp(arquivo, "teste/matriz.log")){
 		return 'm';
-	}else if(!strcmp(arquivo, "simulador.log")){
+	}else if(!strcmp(arquivo, "teste/simulador.log")){
 		return 's';
 	}
 	return '0';
@@ -72,7 +73,7 @@ void saida(char f, char *arquivo, uint size_page){
 	char arq_saida[20];
 	
 	// leituras
-	sprintf(arq_saida, "logs/%c-%c-r", f, t);
+	sprintf(arq_saida, "dados/%c-%c-r", f, t);
 	FILE *escritor = fopen(arq_saida, "a");		
 	if(size_page == 64){	
 		fprintf(escritor, "%d\n", n_reads);
@@ -82,7 +83,7 @@ void saida(char f, char *arquivo, uint size_page){
 	fclose(escritor);
 	
 	// escrita
-	sprintf(arq_saida, "logs/%c-%c-w", f, t);
+	sprintf(arq_saida, "dados/%c-%c-w", f, t);
 	escritor = fopen(arq_saida, "a");		
 	if(size_page == 64){	
 		fprintf(escritor, "%d\n", n_writes);
@@ -92,7 +93,7 @@ void saida(char f, char *arquivo, uint size_page){
 	fclose(escritor);
 	
 	// acertos
-	sprintf(arq_saida, "logs/%c-%c-a", f, t);
+	sprintf(arq_saida, "dados/%c-%c-a", f, t);
 	escritor = fopen(arq_saida, "a");		
 	if(size_page == 64){	
 		fprintf(escritor, "%d\n", (tempo - page_faults));
@@ -102,7 +103,7 @@ void saida(char f, char *arquivo, uint size_page){
 	fclose(escritor);
 	
 	// erros	
-	sprintf(arq_saida, "logs/%c-%c-e", f, t);		
+	sprintf(arq_saida, "dados/%c-%c-e", f, t);		
 	escritor = fopen(arq_saida, "a");		
 	if(size_page == 64){	
 		fprintf(escritor, "%d\n", page_faults);

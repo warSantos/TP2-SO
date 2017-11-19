@@ -31,3 +31,18 @@ void zera_bit(void){
 		mem_virtual[i].controle &= ~REFERENCIADO;
 	}
 }
+
+void print_memoria_virtual(){
+	int i;
+	char format[25];
+	
+	sprintf(format, "  %%0%dd: %%11d | %%11d [%%d]\n", size_mem_virtual);
+	
+	printf("  %11s: %11s | %11s [RMP]\n", "Indice", "Endereco", "Ult. Acesso");
+	for(i=0; i<size_mem_virtual; i++){
+		printf("  %11d: %11d | %11d [%d%d%d]\n",
+			i, mem_virtual[i].endereco, mem_virtual[i].ultimo_acesso,
+			mem_virtual[i].controle & REFERENCIADO, mem_virtual[i].controle & MODIFICADO,
+			mem_virtual[i].controle & PRESENTE);
+	}
+}

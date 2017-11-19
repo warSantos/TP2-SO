@@ -12,11 +12,72 @@ uint sub_fifo(uint page){
 
 
 ///Vetor usado para heap binária no lru.
+int construi_heap = 0;
 uint *heap;
 
-uint sub_lru(uint page){
+void heap_refaz(int inicio){
+	uint i = inicio, j = 2 * i + 1;
 
-	return 0;
+	uint troca = heap[i];
+	while(j < size_mem_fisica){
+		printf("Pai[%d]: %d # E[%d](%d)", i, mem_virtual[troca].ultimo_acesso, j, mem_virtual[heap[j]].ultimo_acesso);
+		if( (j+1 < size_mem_fisica) && (mem_virtual[heap[j]].ultimo_acesso > mem_virtual[heap[j + 1]].ultimo_acesso) ){
+			j++;
+			printf(" D[%d](%d)", j, mem_virtual[heap[j]].ultimo_acesso);
+		}
+		printf("\n");
+		
+		if(mem_virtual[heap[j]].ultimo_acesso < mem_virtual[troca].ultimo_acesso){
+			heap[i] = heap[j];
+			i = j;
+			j = 2 * i + 1;
+			
+			printf("Trocado");
+			getchar();
+		}else{
+			getchar();
+			break;
+		}
+	}
+	heap[i] = troca;
+}
+
+void heap_constroi(){
+	uint i;
+	
+	heap = malloc(size_mem_fisica * sizeof(uint));
+	
+	memcpy(heap, mem_fisica, size_mem_fisica * sizeof(uint));
+	
+	printf("constrói:\n");
+	for(i=0; i<size_mem_fisica; i++){
+		printf("%2d: %d, %d\n", i, mem_fisica[i], mem_virtual[mem_fisica[i]].ultimo_acesso);
+	}
+	getchar();
+	
+	for(i = (size_mem_fisica - 1) / 2; i > 0; i--){
+		printf("esq: %d\n", i);
+		heap_refaz(i);
+	}
+	//heap_refaz(0);
+	
+	
+	printf("constrói:\n");
+	for(i=0; i<size_mem_fisica; i++){
+		printf("%2d: %d, %d\n", i, heap[i], mem_virtual[heap[i]].ultimo_acesso);
+	}
+	getchar();
+}
+
+uint sub_lru(uint page){
+	if(!construi_heap){
+		heap_constroi();
+		construi_heap = 1;
+	}
+	
+	heap_refaz(0);
+
+	return heap[0];
 }
 
 
@@ -35,7 +96,7 @@ void substituicao(uint page){
 	mem_virtual[page].endereco = mem_virtual[sai].endereco;
 	
 	//Checando se a página está suja.
-	if((mem_virtual[sai].controle & ALTERADO) != 0){
+	if((mem_virtual[sai].controle & MODIFICADO) != 0){
 		n_dirty_pages++;
 	}
 	

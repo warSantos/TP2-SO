@@ -58,6 +58,8 @@ int main(int argc, char **argv){
 		sscanf(temp_linha, "%x %c\n", &addr, &rw);
 		page = addr / size_page;
 
+		printf("MEM V ANTES:\n");
+		print_memoria_virtual();
 		printf("Memória Física: %d/%d\n", posicao_livre, size_mem_fisica);
 		printf("Endereço: %ld, página %ld\n", addr, page);
 		printf("Endereço: %x, página %d\n", addr, page);
@@ -68,6 +70,7 @@ int main(int argc, char **argv){
 
 				mem_virtual[page].endereco = posicao_livre;
 				posicao_livre++;
+				
 			}else{
 				
 				printf("Memória cheia: chamando o %s\n", algoritmo);
@@ -81,10 +84,10 @@ int main(int argc, char **argv){
 			zera_bit();
 		}
 		mem_virtual[page].ultimo_acesso = tempo;
-		mem_virtual[page].controle = REFERENCIADO;
+		mem_virtual[page].controle = REFERENCIADO | PRESENTE;
 		if(rw == 'W'){
 
-			mem_virtual[page].controle |= ALTERADO;
+			mem_virtual[page].controle |= MODIFICADO;
 			n_writes++;
 		}else{
 
@@ -93,6 +96,11 @@ int main(int argc, char **argv){
 		
 		//Armazena na memória física o índice da memória virtual.
 		mem_fisica[mem_virtual[page].endereco] = page;
+		
+		printf("MEM V DEPOIS:\n");
+		print_memoria_virtual();
+		getchar();
+		
 		++tempo;
 	}while(tempo <= qtdeLinhas);
 	return 0;

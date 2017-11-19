@@ -13,14 +13,14 @@
 
 typedef enum CONTROLE {
 	PRESENTE = 1,
-	ALTERADO = 2,
+	MODIFICADO = 2,
 	REFERENCIADO = 4
 } CONTROLE;
 
 typedef struct Moldura {
 	int endereco;
 	int ultimo_acesso;
-	char controle;
+	unsigned char controle;
 }Moldura;
 
 ///Quantidade de páginas da memória virtual.
@@ -70,5 +70,12 @@ uint leArquivo(char *arquivo);
 
 ///Percorre a memória zerando o bit R de cada página.
 void zera_bit(void);
+
+
+/**
+ * FUNÇÕES DEBUG
+ */
+
+void print_memoria_virtual();
 
 #endif //CORE_H

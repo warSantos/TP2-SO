@@ -85,7 +85,7 @@ uint sub_random(uint page){
 void substituicao(uint page){
 	uint sai = politica(page);
 
-	printf("Quem sai: %d\n", sai);
+	//printf("Quem sai: %d\n", sai);
 
 	//Atualiza o endereço da página que vai entrar.
 	mem_virtual[page].endereco = mem_virtual[sai].endereco;

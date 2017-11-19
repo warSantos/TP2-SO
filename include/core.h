@@ -71,6 +71,16 @@ uint leArquivo(char *arquivo);
 ///Percorre a memória zerando o bit R de cada página.
 void zera_bit(void);
 
+///Detecta qual é o teste a ser executado e retorna um char predefinido.
+char detecta_teste(char *arquivo);
+
+/**
+ * Faz a formatação do log dos arquivos
+ * Minera os dados obtidos na execução. 
+ */
+void saida(char f, char *arquivo, uint size_page);
+
+
 
 /**
  * FUNÇÕES DEBUG

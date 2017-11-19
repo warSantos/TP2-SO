@@ -28,6 +28,7 @@ void zera_bit(void){
 	uint i;
 	for(i = 0; i < size_mem_virtual; ++i){
 
+		//mem_virtual[i].controle &= ~REFERENCIADO;
 		mem_virtual[i].controle &= ~REFERENCIADO;
 	}
 }
@@ -46,20 +47,16 @@ void print_memoria_virtual(){
 			mem_virtual[i].controle & PRESENTE);
 	}
 }
-#define PF printf("entrou\n");
+
 char detecta_teste(char *arquivo){
 
 	if(!strcmp(arquivo, "teste/compilador.log")){
-		PF
 		return 'c';
 	}else if(!strcmp(arquivo, "teste/compressor.log")){
-		PF
 		return 'p';
 	}else if(!strcmp(arquivo, "teste/matriz.log")){
-		PF
 		return 'm';
 	}else if(!strcmp(arquivo, "teste/simulador.log")){
-		PF
 		return 's';
 	}
 	return '0';

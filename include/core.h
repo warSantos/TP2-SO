@@ -9,7 +9,7 @@
 ///Quantidade de caracteres por linha.
 #define LEN 11
 ///Intervalo de tempo para zerar os bits de referenciado.
-#define ZERO_TIME 1000
+#define ZERO_TIME 10000
 
 typedef enum CONTROLE {
 	PRESENTE = 1,

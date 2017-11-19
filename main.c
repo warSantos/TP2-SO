@@ -1,10 +1,12 @@
 #include "substituicao.h"
 
+#define stage(N) printf("stage %d\n", N);
+
 int main(int argc, char **argv){
 
 	algoritmo = argv[1];
 	char *arquivo = argv[2];
-	uint size_page = atoi(argv[3]) * 1024;	
+	uint size_page = atoi(argv[3]) * 1024;
 	size_mem_fisica = atoi(argv[4]) * 1024;
 
 	// flag para habilitar/desabilitar debug
@@ -39,32 +41,33 @@ int main(int argc, char **argv){
 		default:
 			break;
 	}
-
 	//Inicializando as variáveis globais.
 	page_faults = 0;
 	n_reads = 0;
 	n_writes = 0;
 	n_dirty_pages = 0;
-	tempo = 0;
+	tempo = 1;
 
 	uint qtdeLinhas = leArquivo(arquivo);
-	uint addr, nova_pagina = -1;
+	uint addr;
 	uint page, posicao_livre = 0;
 	char *temp_linha, rw;
 	srand(time(NULL));
 	
-	uint32_t asd;
+	
 	if(flag_debug == 'd'){
 
 		printf("size_ram: %d size_vi: %d\n", size_mem_fisica, size_mem_virtual);
 	}
 	do{
-		break;
+		
 		// referenciando a referencia i.
 		temp_linha = acessos + (LEN * tempo);
-		sscanf(temp_linha, "%x %c\n", &addr, &rw);
+		rw = temp_linha[9];
+		temp_linha[8] = '\0';
+		addr = (uint)strtol(temp_linha, NULL, 16);
 		page = addr / size_page;
-
+		
 		if(flag_debug == 'd'){
 
 			printf("MEM V ANTES:\n");
@@ -89,7 +92,7 @@ int main(int argc, char **argv){
 			}
 			page_faults++;
 		}
-		if(!(tempo % ZERO_TIME)){
+		if((tempo % ZERO_TIME) == 0){
 			// verifica se é hora de zerar os bits de referência.
 			zera_bit();
 		}
@@ -114,7 +117,7 @@ int main(int argc, char **argv){
 			getchar();
 		}
 		++tempo;
-	}while(tempo <= qtdeLinhas);	
+	}while(tempo <= qtdeLinhas);
 	saida(algoritmo[0], arquivo, size_page / 1024);
 	return 0;
 }

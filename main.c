@@ -88,6 +88,10 @@ int main(int argc, char **argv){
 				if(flag_debug == 'd'){
 					printf("Memória cheia: chamando o %s\n", algoritmo);
 				}
+				if(mem_virtual[page].controle & MODIFICADO){
+					
+					n_dirty_pages++;
+				}
 				substituicao(page);
 			}
 			page_faults++;

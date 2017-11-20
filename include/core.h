@@ -18,8 +18,8 @@ typedef enum CONTROLE {
 } CONTROLE;
 
 typedef struct Moldura {
-	int endereco;
-	int ultimo_acesso;
+	uint endereco;
+	uint ultimo_acesso;
 	unsigned char controle;
 }Moldura;
 

@@ -78,7 +78,7 @@ void saida(char f, char *arquivo, uint size_page){
 	if(size_page == 64){	
 		fprintf(escritor, "%d\n", n_reads);
 	}else{
-		fprintf(escritor, "%d;", n_reads);
+		fprintf(escritor, "%d	", n_reads);
 	}
 	fclose(escritor);
 	
@@ -88,7 +88,7 @@ void saida(char f, char *arquivo, uint size_page){
 	if(size_page == 64){	
 		fprintf(escritor, "%d\n", n_writes);
 	}else{
-		fprintf(escritor, "%d;", n_writes);
+		fprintf(escritor, "%d	", n_writes);
 	}	
 	fclose(escritor);
 	
@@ -98,7 +98,7 @@ void saida(char f, char *arquivo, uint size_page){
 	if(size_page == 64){	
 		fprintf(escritor, "%d\n", (tempo - page_faults));
 	}else{
-		fprintf(escritor, "%d;", (tempo - page_faults));
+		fprintf(escritor, "%d	", (tempo - page_faults));
 	}	
 	fclose(escritor);
 	
@@ -108,7 +108,17 @@ void saida(char f, char *arquivo, uint size_page){
 	if(size_page == 64){	
 		fprintf(escritor, "%d\n", page_faults);
 	}else{
-		fprintf(escritor, "%d;", page_faults);
+		fprintf(escritor, "%d	", page_faults);
+	}	
+	fclose(escritor);
+
+	// dirty pages	
+	sprintf(arq_saida, "dados/%c-%c-d", f, t);		
+	escritor = fopen(arq_saida, "a");		
+	if(size_page == 64){	
+		fprintf(escritor, "%d\n", n_dirty_pages);
+	}else{
+		fprintf(escritor, "%d	", n_dirty_pages);
 	}	
 	fclose(escritor);
 	

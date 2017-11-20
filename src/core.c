@@ -35,9 +35,6 @@ void zera_bit(void){
 
 void print_memoria_virtual(){
 	int i;
-	char format[25];
-	
-	sprintf(format, "  %%0%dd: %%11d | %%11d [%%d]\n", size_mem_virtual);
 	
 	printf("  %11s: %11s | %11s [RMP]\n", "Indice", "Endereco", "Ult. Acesso");
 	for(i=0; i<size_mem_virtual; i++){

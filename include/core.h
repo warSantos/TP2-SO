@@ -52,8 +52,8 @@ uint tempo;
 char *acessos;
 
 //TO-DO: não precisa ser global se usar ponteiro de função.
-char *algoritmo;
 
+int debug;
 
 /**
  * FUNÇÕES ÚTEIS

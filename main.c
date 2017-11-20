@@ -4,19 +4,26 @@
 
 int main(int argc, char **argv){
 
-	algoritmo = argv[1];
+	if(argc < 4){
+		printf("Fltando argumentos.\n");
+		return 1;
+	}
+	char *algoritmo = argv[1];
 	char *arquivo = argv[2];
 	uint size_page = atoi(argv[3]) * 1024;
 	size_mem_fisica = atoi(argv[4]) * 1024;
 
 	// flag para habilitar/desabilitar debug
-	char flag_debug = argv[5][0];
+	debug = 0;
+	if(argc > 4){
+		debug = (argv[5][0] == 'd');
+	}
 
 	size_mem_virtual = (1UL << 32) / size_page;
 	size_mem_fisica /= size_page;
 	
-	mem_virtual = malloc(size_mem_virtual * sizeof(Moldura));
-	mem_fisica = malloc(size_mem_fisica * sizeof(int));
+	mem_virtual = calloc(sizeof(Moldura), size_mem_virtual);
+	mem_fisica = calloc(sizeof(int), size_mem_fisica);
 	
 	//Definindo a política de escalonamento.
 	switch(algoritmo[0]){
@@ -46,7 +53,7 @@ int main(int argc, char **argv){
 	n_reads = 0;
 	n_writes = 0;
 	n_dirty_pages = 0;
-	tempo = 1;
+	tempo = 0;
 
 	uint qtdeLinhas = leArquivo(arquivo);
 	uint addr;
@@ -55,11 +62,12 @@ int main(int argc, char **argv){
 	srand(time(NULL));
 	
 	
-	if(flag_debug == 'd'){
+	if(debug){
 
 		printf("size_ram: %d size_vi: %d\n", size_mem_fisica, size_mem_virtual);
 	}
 	do{
+		
 		
 		// referenciando a referencia i.
 		temp_linha = acessos + (LEN * tempo);
@@ -68,13 +76,13 @@ int main(int argc, char **argv){
 		addr = (uint)strtol(temp_linha, NULL, 16);
 		page = addr / size_page;
 		
-		if(flag_debug == 'd'){
+		if(debug){
 
 			printf("MEM V ANTES:\n");
 			print_memoria_virtual();
 			printf("Memória Física: %d/%d\n", posicao_livre, size_mem_fisica);
 			printf("Endereço: %ld, página %ld\n", addr, page);
-			printf("Endereço: %x, página %d\n", addr, page);
+			printf("Tempo: %d # Acertos: %d # Erros: %d\n", tempo, tempo - page_faults, page_faults);
 			getchar();
 		}
 		if(!(mem_virtual[page].controle & PRESENTE)){
@@ -82,15 +90,12 @@ int main(int argc, char **argv){
 			if(posicao_livre < size_mem_fisica){
 
 				mem_virtual[page].endereco = posicao_livre;
-				posicao_livre++;				
+				posicao_livre++;
 			}else{
 				
-				if(flag_debug == 'd'){
+				if(debug){
 					printf("Memória cheia: chamando o %s\n", algoritmo);
-				}
-				if(mem_virtual[page].controle & MODIFICADO){
-					
-					n_dirty_pages++;
+					getchar();
 				}
 				substituicao(page);
 			}
@@ -98,7 +103,27 @@ int main(int argc, char **argv){
 		}else{
 			//O lru precisa refazer a heap das páginas que foram acessadas.
 			if(posicao_livre >= size_mem_fisica && algoritmo[0] == 'l'){
+				
+				if(debug){
+					
+					printf("oi\n");getchar();
+					uint kk;
+					for(kk=0; kk<size_mem_fisica; kk++){
+						printf("ram[%d]: %d\n", kk, mem_fisica[kk]);
+					}
+				}
 				mem_virtual[page].ultimo_acesso = tempo;
+				mem_fisica[mem_virtual[page].endereco] = page;
+				
+				if(debug){/*
+					printf("-----\n");
+					for(kk=0; kk<size_mem_fisica; kk++){
+						printf("ram[%d]: %d\n", kk, mem_fisica[kk]);
+					}
+					print_memoria_virtual();
+					getchar();
+					*/
+				}
 				extern construi_heap;
 				if(!construi_heap){
 					construi_heap = 1;
@@ -125,11 +150,11 @@ int main(int argc, char **argv){
 		}
 		
 		//Armazena na memória física o índice da memória virtual.
-		if(posicao_livre < size_mem_fisica && algoritmo[0] == 'l'){
+		if(posicao_livre <= size_mem_fisica && algoritmo[0] == 'l'){
 			mem_fisica[mem_virtual[page].endereco] = page;
 		}
 		
-		if(flag_debug == 'd'){
+		if(debug){
 
 			printf("MEM V DEPOIS:\n");		
 			print_memoria_virtual();
@@ -137,6 +162,9 @@ int main(int argc, char **argv){
 		}
 		++tempo;
 	}while(tempo <= qtdeLinhas);
+	printf("%d/%d\ntempo: %d\nacertp: %d\nerro: %d\ndp: %d\n", posicao_livre, size_mem_fisica, tempo, tempo - page_faults, page_faults, n_dirty_pages);
+	printf("W: %d\nR: %d\n", n_writes, n_reads);
+	return 0;
 	saida(algoritmo[0], arquivo, size_page / 1024);
 	return 0;
 }

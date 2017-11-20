@@ -15,17 +15,24 @@ uint sub_fifo(uint page){
 int construi_heap = 0;
 uint *heap;
 
-void heap_refaz(int inicio){
+void heap_refaz(uint inicio){
 	uint i = inicio, j = 2 * i + 1;
 
 	uint troca = heap[i];
 	while(j < size_mem_fisica){
-		//printf("Pai[%d]: %d # E[%d](%d)", i, mem_virtual[troca].ultimo_acesso, j, mem_virtual[heap[j]].ultimo_acesso);
+		if(debug){
+			printf("Pai[%d]: %d # E[%d](%d)", i, mem_virtual[troca].ultimo_acesso, j, mem_virtual[heap[j]].ultimo_acesso);
+
+		}
 		if((j + 1 < size_mem_fisica) && (mem_virtual[heap[j]].ultimo_acesso > mem_virtual[heap[j + 1]].ultimo_acesso)){
 			j++;
-			//printf(" D[%d](%d)", j, mem_virtual[heap[j]].ultimo_acesso);
+			if(debug){
+				printf(" D[%d](%d)", j, mem_virtual[heap[j]].ultimo_acesso);
+			}
 		}
-		//printf("\n");
+		if(debug){
+			printf("\n");	
+		}
 
 		if(mem_virtual[heap[j]].ultimo_acesso < mem_virtual[troca].ultimo_acesso){
 			heap[i] = heap[j];
@@ -34,9 +41,13 @@ void heap_refaz(int inicio){
 			i = j;
 			j = 2 * i + 1;
 
-			//printf("Trocado");getchar();
+			if(debug){
+				printf("Trocado");getchar();
+			}
 		}else{
-			//getchar();
+			if(debug){
+				getchar();
+			}
 			break;
 		}
 	}
@@ -51,16 +62,26 @@ void heap_constroi(){
 	heap = malloc(size_mem_fisica * sizeof(uint));
 
 	//memcpy(heap, mem_fisica, size_mem_fisica * sizeof(uint));
+	if(debug){
+		printf("CONTROI HEAP\nRAM:\n");
+		for(i=0; i<size_mem_fisica; i++){
+			printf("%2d: %d\n", i, mem_fisica[i]);
+		}
+		getchar();
+	}
+	
 	for(i=0; i<size_mem_fisica; i++){
 		heap[i] = mem_fisica[i];
 		mem_fisica[i] = i;
 	}
 	
-	/*printf("constroi\n");
-	for(i = 0; i < size_mem_fisica; i++){
-		printf("%2d: %d, %d\n", i, heap[i], mem_virtual[heap[i]].ultimo_acesso);
+	if(debug){
+		printf("constroi\n");
+		for(i = 0; i < size_mem_fisica; i++){
+			printf("%2d: %d, %d\n", i, heap[i], mem_virtual[heap[i]].ultimo_acesso);
+		}
+		getchar();
 	}
-	getchar();*/
 
 	for(i = (size_mem_fisica - 1) / 2; i > 0; i--){
 		heap_refaz(i);
@@ -76,12 +97,14 @@ uint sub_lru(uint page){
 
 	heap_refaz(0);
 
-	/*printf("lru:\n");
-	uint i;
-	for(i = 0; i < size_mem_fisica; i++){
-		printf("%2d: %d, %d\n", i, heap[i], mem_virtual[heap[i]].ultimo_acesso);
+	if(debug){
+		printf("lru:\n");
+		uint i;
+		for(i = 0; i < size_mem_fisica; i++){
+			printf("%2d: %d, %d\n", i, heap[i], mem_virtual[heap[i]].ultimo_acesso);
+		}
+		getchar();
 	}
-	getchar();*/
 
 	uint sai = heap[0];
 
@@ -98,7 +121,10 @@ uint sub_random(uint page){
 void substituicao(uint page){
 	uint sai = politica(page);
 
-	//printf("Quem sai: %d\n", sai);
+	if(debug){
+		printf("Quem sai: %d\n", sai);
+		getchar();
+	}
 
 	//Atualiza o endereço da página que vai entrar.
 	mem_virtual[page].endereco = mem_virtual[sai].endereco;

@@ -18,8 +18,21 @@ int main(int argc, char **argv){
 	if(argc > 4){
 		debug = (argv[5][0] == 'd');
 	}
-
+	//Inicializando as variáveis globais.
+	page_faults = 0;
+	n_reads = 0;
+	n_writes = 0;
+	n_dirty_pages = 0;
+	tempo = 0;
+	
 	size_mem_virtual = (1UL << 32) / size_page;
+	if(size_mem_virtual > size_mem_fisica){
+		
+		printf("Tabela de página maior que a memória dispnível.\n");
+		printf("Memória Virtual: %d Memória Física %d.\n", size_mem_virtual, size_mem_fisica);
+		saida(algoritmo[0] , arquivo, size_page);
+		return 0;
+	}
 	size_mem_fisica /= size_page;
 	
 	mem_virtual = calloc(sizeof(Moldura), size_mem_virtual);
@@ -47,13 +60,7 @@ int main(int argc, char **argv){
 
 		default:
 			break;
-	}
-	//Inicializando as variáveis globais.
-	page_faults = 0;
-	n_reads = 0;
-	n_writes = 0;
-	n_dirty_pages = 0;
-	tempo = 0;
+	}	
 
 	uint qtdeLinhas = leArquivo(arquivo);
 	uint addr;
@@ -67,8 +74,6 @@ int main(int argc, char **argv){
 		printf("size_ram: %d size_vi: %d\n", size_mem_fisica, size_mem_virtual);
 	}
 	do{
-		
-		
 		// referenciando a referencia i.
 		temp_linha = acessos + (LEN * tempo);
 		rw = temp_linha[9];
@@ -94,45 +99,13 @@ int main(int argc, char **argv){
 			}else{
 				
 				if(debug){
+					print_memoria_virtual();
 					printf("Memória cheia: chamando o %s\n", algoritmo);
 					getchar();
 				}
 				substituicao(page);
 			}
 			page_faults++;
-		}else{
-			//O lru precisa refazer a heap das páginas que foram acessadas.
-			if(posicao_livre >= size_mem_fisica && algoritmo[0] == 'l'){
-				
-				if(debug){
-					
-					printf("oi\n");getchar();
-					uint kk;
-					for(kk=0; kk<size_mem_fisica; kk++){
-						printf("ram[%d]: %d\n", kk, mem_fisica[kk]);
-					}
-				}
-				mem_virtual[page].ultimo_acesso = tempo;
-				mem_fisica[mem_virtual[page].endereco] = page;
-				
-				if(debug){/*
-					printf("-----\n");
-					for(kk=0; kk<size_mem_fisica; kk++){
-						printf("ram[%d]: %d\n", kk, mem_fisica[kk]);
-					}
-					print_memoria_virtual();
-					getchar();
-					*/
-				}
-				extern construi_heap;
-				if(!construi_heap){
-					construi_heap = 1;
-					heap_constroi();
-					heap_refaz(0);
-				}else{
-					heap_refaz(mem_fisica[mem_virtual[page].endereco]);
-				}
-			}
 		}
 		if((tempo % ZERO_TIME) == 0){
 			// verifica se é hora de zerar os bits de referência.
@@ -150,9 +123,7 @@ int main(int argc, char **argv){
 		}
 		
 		//Armazena na memória física o índice da memória virtual.
-		if(posicao_livre <= size_mem_fisica && algoritmo[0] == 'l'){
-			mem_fisica[mem_virtual[page].endereco] = page;
-		}
+		mem_fisica[mem_virtual[page].endereco] = page;
 		
 		if(debug){
 
@@ -162,9 +133,8 @@ int main(int argc, char **argv){
 		}
 		++tempo;
 	}while(tempo <= qtdeLinhas);
-	printf("%d/%d\ntempo: %d\nacertp: %d\nerro: %d\ndp: %d\n", posicao_livre, size_mem_fisica, tempo, tempo - page_faults, page_faults, n_dirty_pages);
-	printf("W: %d\nR: %d\n", n_writes, n_reads);
-	return 0;
+	//printf("%d/%d\ntempo: %d\nacertp: %d\nerro: %d\ndp: %d\n", posicao_livre, size_mem_fisica, tempo, tempo - page_faults, page_faults, n_dirty_pages);
+	//printf("W: %d\nR: %d\n", n_writes, n_reads);	
 	saida(algoritmo[0], arquivo, size_page / 1024);
 	return 0;
 }

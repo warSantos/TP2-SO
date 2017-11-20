@@ -11,6 +11,18 @@ uint sub_fifo(uint page){
 }
 
 
+uint sub_lru(uint page){
+	uint i, menor = 0;
+	for(i=0; i<size_mem_fisica; i++){
+		if(mem_virtual[mem_fisica[i]].ultimo_acesso < mem_virtual[mem_fisica[menor]].ultimo_acesso){
+			menor = i;
+		}
+	}
+	
+	return mem_fisica[menor];
+}
+
+
 ///Vetor usado para heap binária no lru.
 int construi_heap = 0;
 uint *heap;
@@ -89,7 +101,7 @@ void heap_constroi(){
 	//heap_refaz(0);
 }
 
-uint sub_lru(uint page){
+uint sub_lru_h(uint page){
 	if(!construi_heap){
 		heap_constroi();
 		construi_heap = 1;

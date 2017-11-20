@@ -1,11 +1,14 @@
 #include "substituicao.h"
 
-#define stage(N) printf("stage %d\n", N);
-
 int main(int argc, char **argv){
-
-	if(argc < 4){
-		printf("Fltando argumentos.\n");
+	if(argc < 5){
+		printf("Fltando argumentos.\n\n");
+		printf("1. o algoritmo de substituicao a ser usado (lru, fifo ou random)\n"
+				"2. o arquivo contendo a sequencia de enderecos de memoria acessados (arquivo.log, nesse exemplo)\n"
+				"3. o tamanho de cada pagina/quadro de memoria, em kilobytes — faixa de valores razoaveis: de 2 a 64\n"
+				"4. o tamanho total da memoria fısica disponıvel para o processo, tambem em kilobytes — faixa de"
+				"valores razoaveis: de 128 a 16384 (16 MB).\n"
+				"5. debug para ativar o modo depuracao. (opcional)\n");
 		return 1;
 	}
 	char *algoritmo = argv[1];
@@ -15,7 +18,7 @@ int main(int argc, char **argv){
 
 	// flag para habilitar/desabilitar debug
 	debug = 0;
-	if(argc > 4){
+	if(argc > 5){
 		debug = (argv[5][0] == 'd');
 	}
 	//Inicializando as variáveis globais.
@@ -28,10 +31,9 @@ int main(int argc, char **argv){
 	size_mem_virtual = (1UL << 32) / size_page;
 	if(size_mem_virtual > size_mem_fisica){
 		
-		printf("Tabela de página maior que a memória dispnível.\n");
-		printf("Memória Virtual: %d Memória Física %d.\n", size_mem_virtual, size_mem_fisica);
-		saida(algoritmo[0] , arquivo, size_page);
-		return 0;
+		printf("Tabela de pagina maior que a memoria dispnivel.\n");
+		printf("Memoria Virtual: %d | Memoria Fisica %d.\n", size_mem_virtual, size_mem_fisica);
+		return 1;
 	}
 	size_mem_fisica /= size_page;
 	
@@ -73,8 +75,14 @@ int main(int argc, char **argv){
 
 		printf("size_ram: %d size_vi: %d\n", size_mem_fisica, size_mem_virtual);
 	}
+	printf("Executando o simulador...\n"
+			"Arquivo de entrada: %s\n"
+			"Tamanho da memoria: %d KB\n"
+			"Tamanho das paginas: %d KB\n"
+			"Tecnica de reposicao: %s\n",
+		arquivo, size_mem_fisica * size_page / 1024 , size_page / 1024, algoritmo);
 	do{
-		// referenciando a referencia i.
+		// referenciando a referencia.
 		temp_linha = acessos + (LEN * tempo);
 		rw = temp_linha[9];
 		temp_linha[8] = '\0';
@@ -83,10 +91,10 @@ int main(int argc, char **argv){
 		
 		if(debug){
 
-			printf("MEM V ANTES:\n");
+			printf("MEMORIA ANTES:\n");
 			print_memoria_virtual();
 			printf("Memória Física: %d/%d\n", posicao_livre, size_mem_fisica);
-			printf("Endereço: %ld, página %ld\n", addr, page);
+			printf("Endereço: %d, página %d\n", addr, page);
 			printf("Tempo: %d # Acertos: %d # Erros: %d\n", tempo, tempo - page_faults, page_faults);
 			getchar();
 		}
@@ -127,14 +135,15 @@ int main(int argc, char **argv){
 		
 		if(debug){
 
-			printf("MEM V DEPOIS:\n");		
+			printf("MEMORIA DEPOIS:\n");		
 			print_memoria_virtual();
 			getchar();
 		}
 		++tempo;
 	}while(tempo <= qtdeLinhas);
-	//printf("%d/%d\ntempo: %d\nacertp: %d\nerro: %d\ndp: %d\n", posicao_livre, size_mem_fisica, tempo, tempo - page_faults, page_faults, n_dirty_pages);
-	//printf("W: %d\nR: %d\n", n_writes, n_reads);	
-	saida(algoritmo[0], arquivo, size_page / 1024);
+	
+	printf("Paginas lidas: %d\n"
+			"Paginas escritas: %d\n", n_reads, n_writes);
+	
 	return 0;
 }

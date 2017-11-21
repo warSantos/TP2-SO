@@ -14,115 +14,13 @@ uint sub_fifo(uint page){
 uint sub_lru(uint page){
 	uint i, menor = 0;
 	for(i=0; i<size_mem_fisica; i++){
+		//Usa a própria memória principal como tabela inversa.
 		if(mem_virtual[mem_fisica[i]].ultimo_acesso < mem_virtual[mem_fisica[menor]].ultimo_acesso){
 			menor = i;
 		}
 	}
 	
 	return mem_fisica[menor];
-}
-
-
-///Vetor usado para heap binária no lru.
-int construi_heap = 0;
-uint *heap;
-
-void heap_refaz(uint inicio){
-	uint i = inicio, j = 2 * i + 1;
-
-	uint troca = heap[i];
-	while(j < size_mem_fisica){
-		if(debug){
-			printf("Pai[%d]: %d # E[%d](%d)", i, mem_virtual[troca].ultimo_acesso, j, mem_virtual[heap[j]].ultimo_acesso);
-
-		}
-		if((j + 1 < size_mem_fisica) && (mem_virtual[heap[j]].ultimo_acesso > mem_virtual[heap[j + 1]].ultimo_acesso)){
-			j++;
-			if(debug){
-				printf(" D[%d](%d)", j, mem_virtual[heap[j]].ultimo_acesso);
-			}
-		}
-		if(debug){
-			printf("\n");	
-		}
-
-		if(mem_virtual[heap[j]].ultimo_acesso < mem_virtual[troca].ultimo_acesso){
-			heap[i] = heap[j];
-			mem_fisica[j] = i;
-			
-			i = j;
-			j = 2 * i + 1;
-
-			if(debug){
-				printf("Trocado");getchar();
-			}
-		}else{
-			if(debug){
-				getchar();
-			}
-			break;
-		}
-	}
-	heap[i] = troca;
-	mem_fisica[inicio] = i;
-	
-}
-
-void heap_constroi(){
-	uint i;
-
-	heap = malloc(size_mem_fisica * sizeof(uint));
-
-	//memcpy(heap, mem_fisica, size_mem_fisica * sizeof(uint));
-	if(debug){
-		printf("CONTROI HEAP\nRAM:\n");
-		for(i=0; i<size_mem_fisica; i++){
-			printf("%2d: %d\n", i, mem_fisica[i]);
-		}
-		getchar();
-	}
-	
-	for(i=0; i<size_mem_fisica; i++){
-		heap[i] = mem_fisica[i];
-		mem_fisica[i] = i;
-	}
-	
-	if(debug){
-		printf("constroi\n");
-		for(i = 0; i < size_mem_fisica; i++){
-			printf("%2d: %d, %d\n", i, heap[i], mem_virtual[heap[i]].ultimo_acesso);
-		}
-		getchar();
-	}
-
-	for(i = (size_mem_fisica - 1) / 2; i > 0; i--){
-		heap_refaz(i);
-	}
-	//heap_refaz(0);
-}
-
-uint sub_lru_h(uint page){
-	if(!construi_heap){
-		heap_constroi();
-		construi_heap = 1;
-	}
-
-	heap_refaz(0);
-
-	if(debug){
-		printf("lru:\n");
-		uint i;
-		for(i = 0; i < size_mem_fisica; i++){
-			printf("%2d: %d, %d\n", i, heap[i], mem_virtual[heap[i]].ultimo_acesso);
-		}
-		getchar();
-	}
-
-	uint sai = heap[0];
-
-	heap[0] = page;
-
-	return sai;
 }
 
 uint sub_random(uint page){

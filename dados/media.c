@@ -20,12 +20,11 @@ int main(int argc, char *argv[]){
             pages[2] += v3;
             pages[3] += v4;
             pages[4] += v5;
-            pages[5] += v6;
-            printf("%lu %lu %lu %lu %lu %lu\n", v1, v2, v3, v4, v5, v6);
+            pages[5] += v6;            
             ++j;
         }
         j = 0;
-        fprintf(escritor, "%lu %lu %lu %lu %lu %lu\n", pages[0]/32, pages[1]/32, pages[2]/32, pages[3]/32, pages[4]/32, pages[5]/32);   
+        fprintf(escritor, "%lu  %lu %lu %lu %lu %lu\n", pages[0]/32, pages[1]/32, pages[2]/32, pages[3]/32, pages[4]/32, pages[5]/32);   
         pages[0] = 0;
         pages[1] = 0;
         pages[2] = 0;
